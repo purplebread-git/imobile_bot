@@ -35,7 +35,7 @@ async def message(message: types.Message):
         lines = price_text.split('\n')
         c = 0
         lines = [x for x in lines if x]
-
+        print(lines)
         for i in range(0, len(lines)):
             lines[i] = lines[i].split(' ', 2)[2]
 
@@ -60,6 +60,7 @@ async def message(message: types.Message):
                     print(lines[i])
         price_mas_text = '\n'.join(' - '.join(map(str, l)) for l in price_mas)
         await message.bot.send_message(message.from_user.id, price_mas_text, reply_markup=markup)
+
 
         count = 0
 
