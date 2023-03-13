@@ -23,18 +23,15 @@ async def start(message: types.Message):
 async def message(message: types.Message):
     global count, lines
     msg = message['text']
-    print(count)
     if count == 0:
         if msg == "Загрузить прайс":
             await message.reply("Отправьте мне прайс одним сообщением")
             count = 1
-        print(count)
     elif count == 1:
         print(msg)
         count = 0
 
         price_text = msg
-        lines = []
         lines = price_text.split('\n')
         c = 0
         lines = [x for x in lines if x]
@@ -48,16 +45,23 @@ async def message(message: types.Message):
 
 
         await message.bot.send_message(message.from_user.id, '1', reply_markup=markup)
-    elif count == 0:
-        if msg == "Сгенерить ценники":
-            await message.bot.send_message(message.from_user.id, 'Отправьте запрос одним сообщением', reply_markup=markup)
-            count=2
-            print(count)
+
+    if count == 0 and msg == "Сгенерить ценники":
+        await message.bot.send_message(message.from_user.id, 'Отправьте запрос одним сообщением', reply_markup=markup)
+        count = 2
     elif count == 2:
-        zapros = msg
+        price_mas=[]
+        zapros = msg.split('\n')
+        print(zapros)
         for i in range(0, len(lines)):
-            if zapros == lines[i][0]:
-                print('yra')
+            for j in range(0, len(zapros)):
+                if zapros[j] == lines[i][0]:
+                    price_mas.append(lines[i])
+                    print(lines[i])
+        price_mas_text = '\n'.join(' - '.join(map(str, l)) for l in price_mas)
+        await message.bot.send_message(message.from_user.id, price_mas_text, reply_markup=markup)
+
+        count = 0
 
 
 
