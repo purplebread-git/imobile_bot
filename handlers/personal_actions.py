@@ -17,7 +17,7 @@ markup.add(item1, item2, item3)
 
 @dp.message_handler(commands="start")
 async def start(message: types.Message):
-    await message.bot.send_message(message.from_user.ida, "Добро пожаловать!", reply_markup=markup)
+    await message.bot.send_message(message.from_user.id, "Добро пожаловать!", reply_markup=markup)
 
 @dp.message_handler()
 async def message(message: types.Message):
@@ -46,7 +46,7 @@ async def message(message: types.Message):
             lines[i][1] = float(lines[i][1].replace(' ', ''))
             print(lines[i])
 
-        print(lines[0][0])
+
         await message.bot.send_message(message.from_user.id, '1', reply_markup=markup)
     elif count == 0:
         if msg == "Сгенерить ценники":
