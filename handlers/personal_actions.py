@@ -52,10 +52,13 @@ async def message(message: types.Message):
         if msg == "Сгенерить ценники":
             await message.bot.send_message(message.from_user.id, 'Отправьте запрос одним сообщением', reply_markup=markup)
             count=2
+            print(count)
     elif count == 2:
         zapros = msg
         for i in range(0, len(lines)):
-            
+            if zapros == lines[i][0]:
+                print('yra')
+
 
 
 
