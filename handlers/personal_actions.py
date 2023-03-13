@@ -13,6 +13,10 @@ item2 = types.KeyboardButton("Сгенерить ценники")
 item3 = types.KeyboardButton("Пустышка")
 markup.add(item1, item2, item3)
 
+markup_who = types.ReplyKeyboardMarkup(resize_keyboard=True)
+item1 = types.KeyboardButton("Рома")
+item2 = types.KeyboardButton("???")
+markup.add(item1, item2)
 
 
 @dp.message_handler(commands="start")
@@ -25,8 +29,15 @@ async def message(message: types.Message):
     msg = message['text']
     if count == 0:
         if msg == "Загрузить прайс":
-            await message.reply("Отправьте мне прайс одним сообщением")
-            count = 1
+            await message.bot.send_message(message.from_user.id, 'Прайс какого поставщика?', reply_markup=markup_who)
+            if msg == "Рома":
+                price_count = 0
+                await message.reply("Отправьте мне прайс одним сообщением")
+                count = 1
+            if msg == "???":
+                price_count = 1
+                await message.reply("Отправьте мне прайс одним сообщением")
+                count = 1
     elif count == 1:
         print(msg)
         count = 0
