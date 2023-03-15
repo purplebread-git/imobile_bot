@@ -39,12 +39,13 @@ async def message(message: types.Message):
             await message.reply("Отправьте мне прайс одним сообщением")
             count = 1
     elif count == 1:
+
+# -------------- Загрузка прайса Ромы ----------------
         if price_count == 0:
             count = 0
 
             price_text = msg
             lines = price_text.split('\n')
-            c = 0
             lines = [x for x in lines if x]
             print(lines)
             for i in range(0, len(lines)):
@@ -53,7 +54,17 @@ async def message(message: types.Message):
                 lines[i] = lines[i].split(' -', 1)
                 lines[i][1] = float(lines[i][1].replace(' ', ''))
                 print(lines[i])
+            price_1 = lines
 
+        if price_count == 1:
+            count = 0
+
+            price_text = msg
+            lines = price_text.split('\n')
+            lines = [x for x in lines if x]
+            print(lines)
+            for i in range(0, len(lines)):
+                lines[i] = lines[i].split()
 
         await message.bot.send_message(message.from_user.id, '1', reply_markup=markup)
 
