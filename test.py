@@ -21,7 +21,14 @@ for i in range(0, len(lines)):
     lines[i] = lines[i].split(' ')
     for j in range(0, len(lines[i])):
         if ":" in emoji.demojize(lines[i][j]):
+
+            vremen_mas =[]
             emoji_flag = lines[i][j]
 
+            for l in range(0, j):
+                vremen_mas.append(lines[i][l])
+            vremen_mas = [vremen_mas.join(' ')]
 
+            vremen_mas.append(emoji_flag)
+            print(vremen_mas)
 print(lines)
