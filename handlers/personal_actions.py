@@ -16,7 +16,7 @@ markup.add(item1, item2, item3)
 markup_who = types.ReplyKeyboardMarkup(resize_keyboard=True)
 item1 = types.KeyboardButton("Рома")
 item2 = types.KeyboardButton("???")
-markup.add(item1, item2)
+markup_who.add(item1, item2)
 
 
 @dp.message_handler(commands="start")
@@ -25,34 +25,34 @@ async def start(message: types.Message):
 
 @dp.message_handler()
 async def message(message: types.Message):
-    global count, lines
+    global count, lines, price_count
     msg = message['text']
     if count == 0:
         if msg == "Загрузить прайс":
             await message.bot.send_message(message.from_user.id, 'Прайс какого поставщика?', reply_markup=markup_who)
-            if msg == "Рома":
-                price_count = 0
-                await message.reply("Отправьте мне прайс одним сообщением")
-                count = 1
-            if msg == "???":
-                price_count = 1
-                await message.reply("Отправьте мне прайс одним сообщением")
-                count = 1
+        if msg == "Рома":
+            price_count = 0
+            await message.reply("Отправьте мне прайс одним сообщением")
+            count = 1
+        if msg == "???":
+            price_count = 1
+            await message.reply("Отправьте мне прайс одним сообщением")
+            count = 1
     elif count == 1:
-        print(msg)
-        count = 0
+        if price_count == 0:
+            count = 0
 
-        price_text = msg
-        lines = price_text.split('\n')
-        c = 0
-        lines = [x for x in lines if x]
-        print(lines)
-        for i in range(0, len(lines)):
-            lines[i] = lines[i].split(' ', 2)[2]
+            price_text = msg
+            lines = price_text.split('\n')
+            c = 0
+            lines = [x for x in lines if x]
+            print(lines)
+            for i in range(0, len(lines)):
+                lines[i] = lines[i].split(' ', 2)[2]
 
-            lines[i] = lines[i].split(' -', 1)
-            lines[i][1] = float(lines[i][1].replace(' ', ''))
-            print(lines[i])
+                lines[i] = lines[i].split(' -', 1)
+                lines[i][1] = float(lines[i][1].replace(' ', ''))
+                print(lines[i])
 
 
         await message.bot.send_message(message.from_user.id, '1', reply_markup=markup)
