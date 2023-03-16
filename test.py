@@ -1,34 +1,11 @@
-import emoji
-
-msg = '''14 128 Midnight 🇺🇸  59000
-14 128 Midnight 🇮🇳  61800
-14 128 Starlight 🇺🇸  59000
-14 128 Starlight 🇮🇳  61900
-14 128 Red  🇺🇸  59000
-14 128 Purple  🇺🇸  59000
-14 128 Purple 🇮🇳  61500
-14 128 Blue  🇺🇸  59000
-  
-14 256 Midnight 🇮🇳  74000
-14 256 Starlight 🇮🇳  73500
-14 256 Purple  🇮🇳  74000
-14 256 Blue 🇮🇳  72500'''
-price_text = msg
-lines = price_text.split('\n')
-lines = [x for x in lines if x]
-print(lines)
+lines = ['🇯🇵Apple iPhone SE 128 (2022) Midnight -36.000', '🇮🇳Apple iPhone 11 128 White - 44.000']
 for i in range(0, len(lines)):
-    lines[i] = lines[i].split(' ')
-    for j in range(0, len(lines[i])):
-        if ":" in emoji.demojize(lines[i][j]):
+    vremen_mas = lines[i]
 
-            vremen_mas =[]
-            emoji_flag = lines[i][j]
+    vremen_mas = vremen_mas.split(' ')[0][0]+vremen_mas.split(' ')[0][1]
+    print(vremen_mas)
+    lines[i] = lines[i].split(' ', 2)[2]
 
-            for l in range(0, j):
-                vremen_mas.append(lines[i][l])
-            vremen_mas = [vremen_mas.join(' ')]
-
-            vremen_mas.append(emoji_flag)
-            print(vremen_mas)
-print(lines)
+    lines[i] = lines[i].split(' -', 1)
+    lines[i][1] = float(lines[i][1].replace(' ', ''))
+    print(lines[i])
