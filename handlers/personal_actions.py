@@ -112,6 +112,14 @@ async def message(message: types.Message):
         price_mas_text = '\n'.join(' - '.join(map(str, l)) for l in price_mas)
         await message.bot.send_message(message.from_user.id, 'Саша\n'+price_mas_text, reply_markup=markup)
 
+        price_mas = []
+        for i in range(0, len(price_2)):
+            for j in range(0, len(zapros)):
+                if zapros[j] == price_2[i][1]:
+                    price_mas.append(price_2[i])
+                    print(price_2[i])
+        price_mas_text = '\n'.join(' - '.join(map(str, l)) for l in price_mas)
+        await message.bot.send_message(message.from_user.id, 'Рома\n'+price_mas_text, reply_markup=markup)
         count = 0
 
 
