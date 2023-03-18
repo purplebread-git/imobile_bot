@@ -1,11 +1,16 @@
-lines = ['🇯🇵Apple iPhone SE 128 (2022) Midnight -36.000', '🇮🇳Apple iPhone 11 128 White - 44.000']
-for i in range(0, len(lines)):
-    vremen_mas = lines[i]
+import openpyxl
+workbook = openpyxl.Workbook()
 
-    vremen_mas = vremen_mas.split(' ')[0][0]+vremen_mas.split(' ')[0][1]
-    print(vremen_mas)
-    lines[i] = lines[i].split(' ', 2)[2]
+# Создаем новый лист
+worksheet = workbook.active
 
-    lines[i] = lines[i].split(' -', 1)
-    lines[i][1] = float(lines[i][1].replace(' ', ''))
-    print(lines[i])
+# Создаем массив значениями
+my_data = [1,2,3,4,5]
+
+# Заполняем таблицу данными из массива
+for i in range(len(my_data)):
+    # Выставляем значения на пересечении строки и столбца
+    worksheet.cell(row=i+1,column=1,value=my_data[i])
+
+# Сохраняем файл
+workbook.save(filename = 'my_file.xlsx')

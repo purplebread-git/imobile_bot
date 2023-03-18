@@ -1,4 +1,4 @@
-import emoji
+import emoji, openpyxl
 from aiogram import types
 from dispatcher import dp
 import re
@@ -50,18 +50,22 @@ async def message(message: types.Message):
             price_text = msg
             lines = price_text.split('\n')
             lines = [x for x in lines if x]
-            # print(lines)
+            print(lines)
             for i in range(0, len(lines)):
                 vremen_mas = lines[i]
                 vremen_mas = vremen_mas.split(' ')[0][0] + vremen_mas.split(' ')[0][1]
+                print('vremen_mas - ',vremen_mas)
 
                 lines[i] = lines[i].split(' ', 2)[2]
+                print('1lines[i] - ',lines[i])
 
                 lines[i] = lines[i].split(' -', 1)
+                print('2lines[i] - ', lines[i])
                 lines[i][1] = float(lines[i][1].replace(' ', ''))
-
+                lines[i][1] = int(lines[i][1]*1000)
+                print('lines[i][1] - ', lines[i][1])
                 lines[i].insert(0, vremen_mas)
-                # print(lines[i])
+                print('3lines[i] - ', lines[i])
             price_1 = lines
             print(price_1)
         # -------------- Загрузка прайса Ромы ----------------
@@ -87,19 +91,16 @@ async def message(message: types.Message):
                             vremen_mas.append(str(lines[i][l]))
 
                         vremen_str = ' '.join(vremen_mas)
-                        print('vremen_str - ', vremen_str)
                         vremen_mas = []
                         vremen_mas.append(emoji_flag)
-                        print('1 vremen_mas - ', vremen_mas)
                         vremen_mas.append(vremen_str)
-                        print('2 vremen_mas - ', vremen_mas)
                         for l in range(j + 1, len(lines[i])):
                             vremen_mas.append(lines[i][l])
-                        print('3 vremen_mas - ', vremen_mas)
                         price_2.append(vremen_mas)
-                        print(i, ' - price_2 - ', price_2)
             print(price_2)
         await message.bot.send_message(message.from_user.id, 'Прайс записан', reply_markup=markup)
+
+# ---------------------------- Генерация прайса по запросу -----------------------------
 
     if count == 0 and msg == "Сгенерить ценники":
         await message.bot.send_message(message.from_user.id, 'Отправьте запрос одним сообщением', reply_markup=markup)
@@ -126,3 +127,7 @@ async def message(message: types.Message):
         price_mas_text = '\n'.join(' - '.join(map(str, l)) for l in price_mas1)
         await message.bot.send_message(message.from_user.id, 'Рома\n' + price_mas_text, reply_markup=markup)
         count = 0
+
+
+        workbook = openpyxl.Workbook()
+        worksheet = workbook.active
