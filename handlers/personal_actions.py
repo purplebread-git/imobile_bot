@@ -11,13 +11,29 @@ count = 0
 markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
 item1 = types.KeyboardButton("Загрузить прайс")
 item2 = types.KeyboardButton("Сгенерить ценники")
-item3 = types.KeyboardButton("Пустышка")
+item3 = types.KeyboardButton("Записать весь прайс в Excel")
 markup.add(item1, item2, item3)
 
 markup_who = types.ReplyKeyboardMarkup(resize_keyboard=True)
 item1 = types.KeyboardButton("Саши")
 item2 = types.KeyboardButton("Ромы")
 markup_who.add(item1, item2)
+
+
+def price_to_excel(price_1, price_2):
+    workbook = openpyxl.Workbook()
+    worksheet = workbook.active
+    worksheet.cell(row=1, column=1, value='Саша')
+    worksheet.cell(row=1, column=4, value='Рома')
+    for i in range(len(price_1)):
+        for j in range(0, len(price_1[i])):
+            worksheet.cell(row=i + 2, column=j + 1, value=price_1[i][j])
+    for i in range(len(price_2)):
+        for j in range(0, len(price_2[i])):
+            worksheet.cell(row=i + 2, column=j + 4, value=price_2[i][j])
+    workbook.save(filename='my_file.xlsx')
+
+
 
 
 @dp.message_handler(commands="start")
@@ -50,22 +66,16 @@ async def message(message: types.Message):
             price_text = msg
             lines = price_text.split('\n')
             lines = [x for x in lines if x]
-            print(lines)
             for i in range(0, len(lines)):
                 vremen_mas = lines[i]
                 vremen_mas = vremen_mas.split(' ')[0][0] + vremen_mas.split(' ')[0][1]
-                print('vremen_mas - ',vremen_mas)
 
                 lines[i] = lines[i].split(' ', 2)[2]
-                print('1lines[i] - ',lines[i])
 
                 lines[i] = lines[i].split(' -', 1)
-                print('2lines[i] - ', lines[i])
                 lines[i][1] = float(lines[i][1].replace(' ', ''))
                 lines[i][1] = int(lines[i][1]*1000)
-                print('lines[i][1] - ', lines[i][1])
                 lines[i].insert(0, vremen_mas)
-                print('3lines[i] - ', lines[i])
             price_1 = lines
             print(price_1)
         # -------------- Загрузка прайса Ромы ----------------
@@ -81,7 +91,6 @@ async def message(message: types.Message):
             for i in range(0, len(lines)):
                 lines[i] = lines[i].split(' ')
                 lines[i] = ' '.join(lines[i]).split()
-                print('lines[i] - ', lines[i])
                 for j in range(0, len(lines[i])):
                     vremen_mas = []
                     if ":" in emoji.demojize(lines[i][j]):
@@ -94,8 +103,11 @@ async def message(message: types.Message):
                         vremen_mas = []
                         vremen_mas.append(emoji_flag)
                         vremen_mas.append(vremen_str)
+                        print('1vremen_mas - ',vremen_mas)
                         for l in range(j + 1, len(lines[i])):
-                            vremen_mas.append(lines[i][l])
+
+                            vremen_mas.append(int(lines[i][l]))
+                        print('2vremen_mas - ', vremen_mas)
                         price_2.append(vremen_mas)
             print(price_2)
         await message.bot.send_message(message.from_user.id, 'Прайс записан', reply_markup=markup)
@@ -128,6 +140,8 @@ async def message(message: types.Message):
         await message.bot.send_message(message.from_user.id, 'Рома\n' + price_mas_text, reply_markup=markup)
         count = 0
 
-
-        workbook = openpyxl.Workbook()
-        worksheet = workbook.active
+    if msg == "Записать весь прайс в Excel":
+        if count == 0:
+            price_to_excel(price_1, price_2)
+            await message.bot.send_message(message.from_user.id, 'Прайс записан в Excel', reply_markup=markup)
+            print('Прайс Записан в Excel')
