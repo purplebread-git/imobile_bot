@@ -19,8 +19,12 @@ item1 = types.KeyboardButton("Саши")
 item2 = types.KeyboardButton("Ромы")
 markup_who.add(item1, item2)
 
+markup_zapros_to_excel = types.ReplyKeyboardMarkup(resize_keyboard=True)
+item1 = types.KeyboardButton("Записать результаты в Excel")
+item2 = types.KeyboardButton("Назад")
+markup_zapros_to_excel.add(item1, item2)
 
-def price_to_excel(price_1, price_2):
+def price_to_excel(price_1, price_2, name='price_full'):
     workbook = openpyxl.Workbook()
     worksheet = workbook.active
     worksheet.cell(row=1, column=1, value='Саша')
@@ -31,7 +35,7 @@ def price_to_excel(price_1, price_2):
     for i in range(len(price_2)):
         for j in range(0, len(price_2[i])):
             worksheet.cell(row=i + 2, column=j + 4, value=price_2[i][j])
-    workbook.save(filename='my_file.xlsx')
+    workbook.save(filename=f'{name}.xlsx')
 
 
 
@@ -43,18 +47,20 @@ async def start(message: types.Message):
 
 @dp.message_handler()
 async def message(message: types.Message):
-    global count, lines, price_count, price_1, price_2, vremen_mas
+    global count, lines, price_count, price_1, price_2, vremen_mas, price_mas, price_mas1
     msg = message['text']
-    if count == 0:
-        if msg == "Загрузить прайс":
+    if msg == "Загрузить прайс":
+        if count == 0:
             await message.bot.send_message(message.from_user.id, 'Прайс какого поставщика?', reply_markup=markup_who)
-        if msg == "Саши":
+    elif msg == "Саши":
+        if count == 0:
             price_count = 0
-            await message.reply("Отправьте мне прайс одним сообщением")
+            await message.reply("Отправьте мне прайс одним сообщением", reply_markup=types.ReplyKeyboardRemove())
             count = 1
-        if msg == "Ромы":
+    elif msg == "Ромы":
+        if count == 0:
             price_count = 1
-            await message.reply("Отправьте мне прайс одним сообщением")
+            await message.reply("Отправьте мне прайс одним сообщением", reply_markup=types.ReplyKeyboardRemove())
             count = 1
     elif count == 1:
 
@@ -103,45 +109,51 @@ async def message(message: types.Message):
                         vremen_mas = []
                         vremen_mas.append(emoji_flag)
                         vremen_mas.append(vremen_str)
-                        print('1vremen_mas - ',vremen_mas)
                         for l in range(j + 1, len(lines[i])):
-
                             vremen_mas.append(int(lines[i][l]))
-                        print('2vremen_mas - ', vremen_mas)
                         price_2.append(vremen_mas)
             print(price_2)
         await message.bot.send_message(message.from_user.id, 'Прайс записан', reply_markup=markup)
 
 # ---------------------------- Генерация прайса по запросу -----------------------------
 
-    if count == 0 and msg == "Сгенерить ценники":
-        await message.bot.send_message(message.from_user.id, 'Отправьте запрос одним сообщением', reply_markup=markup)
+    elif count == 0 and msg == "Сгенерить ценники":
+        await message.bot.send_message(message.from_user.id, 'Отправьте запрос одним сообщением', reply_markup=types.ReplyKeyboardRemove())
         count = 2
     elif count == 2:
         price_mas = []
         zapros = msg.split('\n')
         price_mas1 = []
-
+        count = 0
         print(zapros)
+
         for i in range(0, len(price_1)):
             for j in range(0, len(zapros)):
-                if zapros[j] == price_1[i][1]:
+                if zapros[j].lower() == price_1[i][1].lower():
                     price_mas.append(price_1[i])
+        print(price_mas)
         price_mas_text = '\n'.join(' - '.join(map(str, l)) for l in price_mas)
         await message.bot.send_message(message.from_user.id, 'Саша\n' + price_mas_text, reply_markup=markup)
 
         for i in range(0, len(price_2)):
             for j in range(0, len(zapros)):
-                print(j)
-                if zapros[j] == price_2[i][1]:
+                if zapros[j].lower() == price_2[i][1].lower():
                     price_mas1.append(price_2[i])
-                    print(price_2[i])
+        print(price_mas1)
         price_mas_text = '\n'.join(' - '.join(map(str, l)) for l in price_mas1)
-        await message.bot.send_message(message.from_user.id, 'Рома\n' + price_mas_text, reply_markup=markup)
-        count = 0
+        await message.bot.send_message(message.from_user.id, 'Рома\n' + price_mas_text, reply_markup=markup_zapros_to_excel)
 
-    if msg == "Записать весь прайс в Excel":
+    elif msg == "Записать весь прайс в Excel":
         if count == 0:
             price_to_excel(price_1, price_2)
             await message.bot.send_message(message.from_user.id, 'Прайс записан в Excel', reply_markup=markup)
             print('Прайс Записан в Excel')
+    elif msg == "Записать результаты в Excel":
+        price_to_excel(price_mas, price_mas1, "result_price")
+    elif msg == 'Назад':
+        count = 0
+        await message.bot.send_message(message.from_user.id, 'Возвращаюсь', reply_markup=markup)
+    else:
+        print("Ошибка")
+        await message.bot.send_message(message.from_user.id, 'Ошибка', reply_markup=markup)
+        count = 0
