@@ -1,17 +1,9 @@
-import openpyxl
-workbook = openpyxl.Workbook()
+a = [['🇺🇸', '13 128 Midnight', 59000], ['🇮🇳', '14 128 Midnight', 61800], ['🇺🇸', '14 128 Starlight', 59000], ['🇮🇳', '14 128 Starlight', 61900], ['🇺🇸', '14 128 Red', 59000], ['🇺🇸', '14 128 Purple', 59000], ['🇮🇳', '14 128 Purple', 61500], ['🇺🇸', '14 128 Blue', 59000], ['🇮🇳', '14 256 Midnight', 74000], ['🇮🇳', '14 256 Starlight', 73500], ['🇮🇳', '14 256 Purple', 74000], ['🇮🇳', '14 256 Blue', 72500]]
+print(a)
+for i in range(0, len(a)):
+    if a[i][0] == "🇺🇸" and int(a[i][1].split(' ')[0]) ==14:
+        a[i] = []
+a = [x for x in a if x]
 
-# Создаем новый лист
-worksheet = workbook.active
-
-# Создаем массив значениями
-my_data = [1,2,3,4,5]
-worksheet.cell(row=1,column=1,value='Саша')
-worksheet.cell(row=1,column=4,value='Рома')
-# Заполняем таблицу данными из массива
-for i in range(len(my_data)):
-    # Выставляем значения на пересечении строки и столбца
-    worksheet.cell(row=i+2,column=1,value=my_data[i])
-
-# Сохраняем файл
-workbook.save(filename = 'my_file.xlsx')
+print(a)
+print(a[0][1].split(' ')[0])
