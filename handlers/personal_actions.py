@@ -1,4 +1,6 @@
-import emoji, openpyxl
+import sys
+
+import emoji, openpyxl, traceback
 from aiogram import types
 from dispatcher import dp
 import re
@@ -17,7 +19,8 @@ markup.add(item1, item2, item3)
 markup_who = types.ReplyKeyboardMarkup(resize_keyboard=True)
 item1 = types.KeyboardButton("Саши")
 item2 = types.KeyboardButton("Ромы")
-markup_who.add(item1, item2)
+item3 = types.KeyboardButton('Назад')
+markup_who.add(item1, item2, item3)
 
 markup_zapros_to_excel = types.ReplyKeyboardMarkup(resize_keyboard=True)
 item1 = types.KeyboardButton('Отбор лучшей цены')
@@ -74,7 +77,7 @@ async def start(message: types.Message):
 
 @dp.message_handler()
 async def message(message: types.Message):
-    global count, lines, price_count, price_1, price_2, vremen_mas, price_mas, price_mas1
+    global count, lines, price_count, price_1, price_2, vremen_mas, price_mas, price_mas1, filter_price_sasha, filter_price_roma, percent
     msg = message['text']
     if msg == "Загрузить прайс":
         if count == 0:
@@ -157,8 +160,16 @@ async def message(message: types.Message):
 # ---------------------------- Генерация прайса по запросу -----------------------------
 
     elif count == 0 and msg == "Сгенерить ценники":
-        await message.bot.send_message(message.from_user.id, 'Отправьте запрос одним сообщением', reply_markup=types.ReplyKeyboardRemove())
-        count = 2
+        try:
+            print(price_1)
+            print(price_2)
+            count = 2
+            await message.bot.send_message(message.from_user.id, '<b>Отправьте запрос одним сообщением</b>\n<i>В формате:\n"Название модели" "Объем памяти" "Цвет"</i>', reply_markup=types.ReplyKeyboardRemove())
+        except:
+                await message.bot.send_message(message.from_user.id, 'Загрузите 2 прайса для генерации',reply_markup=markup)
+                tb = sys.exc_info()[2]
+                print(traceback.format_tb(tb)[0])
+
     elif count == 2:
         price_mas = []
         count = 0
@@ -201,16 +212,31 @@ async def message(message: types.Message):
     elif msg == 'Добавить процент':
         count = 'percent'
         await message.bot.send_message(message.from_user.id, 'Какой процент необходим добавить?\nНапишите просто цифрой', reply_markup=types.ReplyKeyboardRemove())
-    if count == 'percent':
-        percent = msg
+    elif count == 'percent':
+        percent = int(msg)
+        for i in range(0, len(filter_price_sasha)):
+            filter_price_sasha[i][2] = int(round(((filter_price_sasha[i][2] + int(filter_price_sasha[i][2] * percent / 100)) / 100), 0) * 100)
+        for i in range(0, len(filter_price_roma)):
+            filter_price_roma[i][2] = int(round(((filter_price_roma[i][2] + int(filter_price_roma[i][2] * percent / 100)) / 100), 0) * 100)
+        price_mas_text = '\n'.join(' - '.join(map(str, l)) for l in filter_price_sasha)
+        await message.bot.send_message(message.from_user.id, '<b>Саша</b>', reply_markup=markup_percent)
+        await message.bot.send_message(message.from_user.id, price_mas_text, reply_markup=markup_percent)
+        price_mas_text = '\n'.join(' - '.join(map(str, l)) for l in filter_price_roma)
+        await message.bot.send_message(message.from_user.id, '<b>Рома</b>', reply_markup=markup_percent)
+        await message.bot.send_message(message.from_user.id, price_mas_text, reply_markup=markup)
 
 
     elif msg == "Записать весь прайс в Excel":
-        price_to_excel(price_1, price_2)
-        await message.bot.send_message(message.from_user.id, 'Прайс записан в Excel', reply_markup=markup)
-        await message.bot.send_document(message.from_user.id, (open('price_full.xlsx', 'rb')))
-        print('Прайс Записан в Excel')
-        count = 0
+        try:
+            print(price_1)
+            print(price_2)
+            price_to_excel(price_1, price_2)
+            await message.bot.send_message(message.from_user.id, 'Прайс записан в Excel', reply_markup=markup)
+            await message.bot.send_document(message.from_user.id, (open('price_full.xlsx', 'rb')))
+            count = 0
+        except:
+            await message.bot.send_message(message.from_user.id, 'Загрузите 2 прайса для записи', reply_markup=markup)
+
     elif msg == "Записать результаты в Excel":
         price_to_excel(price_mas, price_mas1, "result_price")
         await message.bot.send_document(message.from_user.id, (open('result_price.xlsx', 'rb')))
