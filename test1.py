@@ -1,6 +1,6 @@
-a = [['🇦🇪', '14 128 Purple', 63500], ['🇮🇳', '14 128 Blue', 63500], ['🇮🇳', '14 256 Purple', 76000],
+a = [['🇦🇪', '14 128 Purple', 61500], ['🇮🇳', '14 128 Blue', 63500], ['🇮🇳', '14 256 Purple', 76000],
      ['🇯🇵', '14 Pro 128 Purple', 87000], ['🇯🇵', '14 Pro 256 Purple', 95000]]
-b = [['🇺🇸', '14 128 Purple', 59000], ['🇮🇳', '14 128 Purple', 61500], ['🇺🇸', '14 128 Blue', 59000],
+b = [['🇺🇸', '14 128 Purple', 59000], ['🇮🇳', '14 128 Purple', 61500], ['🇺🇸', '14 128 Blue', 63500],
      ['🇮🇳', '14 256 Purple', 74000]]
 
 def filter_price(a, b):
@@ -11,8 +11,13 @@ def filter_price(a, b):
         for el_b in b:
             if el_a[1] == el_b[1]:
                 if el_a[2] < el_b[2]:
+                    print(el_a)
+                    print(el_b)
                     a_processed.append(el_a)
                 elif el_b[2] < el_a[2]:
+                    b_processed.append(el_b)
+                elif el_a[2] == el_b[2]:
+                    a_processed.append(el_a)
                     b_processed.append(el_b)
                 break
         else:

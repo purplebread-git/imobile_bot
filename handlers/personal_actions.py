@@ -57,6 +57,9 @@ def filter_price(a, b):
                     a_processed.append(el_a)
                 elif el_b[2] < el_a[2]:
                     b_processed.append(el_b)
+                elif el_a[2] == el_b[2]:
+                    a_processed.append(el_a)
+                    b_processed.append(el_b)
                 break
         else:
             a_processed.append(el_a)
@@ -117,7 +120,10 @@ async def message(message: types.Message):
                 if price_1[i][0] == "🇺🇸" and int(price_1[i][1].split(' ')[0]) ==14:
                     price_1[i] = []
             price_1 = [x for x in price_1 if x]
-
+            for i in range(0, len(price_1)):
+                if price_1[i][0] == "🇨🇳" and int(price_1[i][1].split(' ')[0]) ==14:
+                    price_1[i] = []
+            price_1 = [x for x in price_1 if x]
             print(price_1)
 
         # -------------- Загрузка прайса Ромы ----------------
@@ -153,6 +159,10 @@ async def message(message: types.Message):
                 if price_2[i][0] == "🇺🇸" and int(price_2[i][1].split(' ')[0]) ==14:
                     price_2[i] = []
             price_2 = [x for x in price_2 if x]
+            for i in range(0, len(price_2)):
+                if price_2[i][0] == "🇨🇳" and int(price_2[i][1].split(' ')[0]) ==14:
+                    price_2[i] = []
+            price_2 = [x for x in price_2 if x]
             print(price_2)
         await message.bot.send_message(message.from_user.id, 'Прайс записан', reply_markup=markup)
         await message.bot.send_message(message.from_user.id, '(Американские модели 14-й линейки в прайс не записываются)', reply_markup=markup)
@@ -165,6 +175,7 @@ async def message(message: types.Message):
             print(price_2)
             count = 2
             await message.bot.send_message(message.from_user.id, '<b>Отправьте запрос одним сообщением</b>\n<i>В формате:\n"Название модели" "Объем памяти" "Цвет"</i>', reply_markup=types.ReplyKeyboardRemove())
+
         except:
                 await message.bot.send_message(message.from_user.id, 'Загрузите 2 прайса для генерации',reply_markup=markup)
                 tb = sys.exc_info()[2]
